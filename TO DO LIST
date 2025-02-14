@@ -1,1 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="todo-app">
+      <h2>TO DO LIST 
+        <img src="https://images.unsplash.com/photo-1517842645767-c639042777db?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bm90ZXN8ZW58MHx8MHx8fDA%3D">
+      </h2>
+      <div class="row">
+        <input type="text" id="input-box" placeholder="Add your task">
+        <button onclick="addTask()">Add</button>
+      </div>
+      <ul id="list-container"></ul>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+//css
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #153677, #4e085f);
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.todo-app {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+h2 img {
+  width: 30px;
+  margin-left: 10px;
+}
+.row{
+  display: flex;
+  align-items: center;
+  background: #edeef0;
+  padding:10px;
+  border-radius: 30px;
+  margin-bottom: 20px;
+}
+input{
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 10px;
+  font-size: 16px;
+
+}
+button{
+  border: none;
+  outline: none;
+  background: #ff914d;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+button:hover {
+  background: #ff751a;
+}
+
+//JS
+document.addEventListener("DOMContentLoaded", loadTasks);
+
+function addTask() {
+  let inputBox = document.getElementById("input-box");
+  let taskText = inputBox.value.trim();
+  
+  if (taskText === "") {
+    alert("Task cannot be empty!");
+    return;
+  }
+
+  let listContainer = document.getElementById("list-container");
+
+  let li = document.createElement("li");
+  li.innerHTML = `<span>${taskText}</span> <button class="delete">❌</button>`;
+
+  li.addEventListener("click", function () {
+    li.classList.toggle("completed");
+    saveTasks();
+  });
+
+  li.querySelector(".delete").addEventListener("click", function () {
+    li.remove();
+    saveTasks();
+  });
+
+  listContainer.appendChild(li);
+  saveTasks();
+  inputBox.value = "";
+}
+
+function saveTasks() {
+  let tasks = [];
+  document.querySelectorAll("#list-container li").forEach((li) => {
+    tasks.push({
+      text: li.querySelector("span").innerText,
+      completed: li.classList.contains("completed"),
+    });
+  });
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function loadTasks() {
+  let storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  let listContainer = document.getElementById("list-container");
+
+  storedTasks.forEach(task => {
+    let li = document.createElement("li");
+    li.innerHTML = `<span>${task.text}</span> <button class="delete">❌</button>`;
+
+    if (task.completed) {
+      li.classList.add("completed");
+    }
+
+    li.addEventListener("click", function () {
+      li.classList.toggle("completed");
+      saveTasks();
+    });
+
+    li.querySelector(".delete").addEventListener("click", function () {
+      li.remove();
+      saveTasks();
+    });
+
+    listContainer.appendChild(li);
+  });
+}
 
